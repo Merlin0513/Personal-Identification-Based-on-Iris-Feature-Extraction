@@ -1,0 +1,56 @@
+##1.   The whole logic of our design
+
+---
+In the main function, we first read in the CASIA Iris Image Dataset. We saved the first session, where there are 3 images of each class, as our training data; and we saved the second session with 4 images of each class as our testing data. We also saved the labels along with the input data. 
+
+We did data preprocessing by applying localization, normalization, enhancement and feature extraction on the data. Then, we used IrisMatching to get the prediction of the training data. We use PerformanceEvaluation to get the (CRR)correct recognition rate of 3 distance measurement methods and 7 different dimension. At the end, we draw the table of recognition results by using different distance measurement methods, and found that ... By plotting the CRR of using feature vectors of different dimension, we found that cosine similarity gives the best result. We used 10 threshhold numbers for matching and got different false match rate and false nonmatch rate. Among these 10 threshhold numbers, all threshholds below 0.42 gives the 0 false match rate and 0.54 gives the smallest false nonmatch rate. We also plotted ROC curve after calculating false match rate and false non match rate.
+---
+
+*   *Iris Location:*
+
+> We define the IrisLocalization function, we get the location of two circles. Here we define centroid function to get the coordinates of the iris center centroid_x and centroid_y. Then we reshape the size of image to square according to the location of the center. We define the circles function to show the circles of pupil and iris.
+
+
+*   *Iris Normalization:*
+
+> We define IrisNormalization function to project the original images represented in Cartesian coordinate system to Rectangular coordinate system and get the expression of the rectangular coordinate parameters. Given an image, center of the pupil and iris, radius of the pupil and iris and height and width of the expected output. We return a standardized dimension image projecting the original iris in a Cartesian coordinate system.
+
+*   *Image Enhancement:* 
+
+> We define ImageEnhancement function using the normalized iris image as the input to improve the contrast of the image. After equalization of the contrast and brightness, the return is a well-distributed texture image.
+
+*   *Feature extraction:* 
+
+> Here we use the defined spatial filters in two channels to acquire the most discriminating iris features. We define spatial filter function as what the paper did rather than use gabor filter to do convolution first. We filtering the lower part of the image (48*512 region) and get the filtered images. Then we use 8*8 window to ergod the filtered images and extract statistical features mean and average absolute deviation and get 1D feature vector. 
+
+*   *Iris Matching:*  
+
+> We define IrisMatching function using fisher linear discriminant to reduces the dimensionality of feature vector and get a new feature vector predict_reduced here. First the dim_reduction function takes training data, testing data and classes of all the training feature vectors as input, then fit the LDA model on the training and testing data, returning train and test data and corresponding training classes.
+
+*   *Performance Evaluation:* 
+
+> Given the prediction list ([predict_L1,predict_L2,predict_cosine] for each testing image) and the expected classes list of the testing images. We return the CRR for each distance (L1,L2 and Cosine).
+
+> We write PerformanceEvaluation function to compute the CRR of all three measures. 
+
+> Then we define the draw_Table3 function to get the 'Recognition Results Using Different Similarity Measures' and show the plot.
+
+> Then we define plot_Fig10 function to get and show the curve of 'correct recognition rate' against 'Dimensionality of teh feature vector'.
+
+> Then we define plot_ROCCurve function to evaluate the model and show the ROC curve.
+
+##2.   Limitation and ways to improve
+
+
+*   For the localization part, since it's hard to identify the boundaries between iris and surroundings, so we use way to approximate the boundary, just plus 55. We need to improve it by using more a accurate way to do edge detection, such as methods like Hough transform or other transformer and edge detsction methods.
+*   For the feature extraction part, we just use the frequency 1/delta_x, which may not make the feature vactor perform best. We can try to use different frequncies to search for the better ROC of feature vector.
+
+
+
+##3.   Peer evaluation form
+
+-- Aaron Aknin, ama2351, Role: Iris localization, Iris normalization, Image enhancement, Iris Recognition, Debugging.
+
+-- Wenqing Yang, wy2374, Role: Feature extration, README
+
+-- Wuyin Zhou, wz2550, Role: Iris matching, Performance evaluation, README
